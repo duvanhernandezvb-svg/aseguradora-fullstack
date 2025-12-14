@@ -2,13 +2,13 @@ from passlib.context import CryptContext
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
+def truncate(password: str) -> str:
+    return password[:72]
+
 password = "admin"
 
-# Truncar a 72 caracteres si es necesario
-password_trunc = password[:72]
+hashed = pwd_context.hash(truncate(password))
 
-hashed = pwd_context.hash(password_trunc)
+print(hashed)
 
-print("Contraseña:", password_trunc)
-print("Hash generado:", hashed)
 
