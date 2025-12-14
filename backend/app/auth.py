@@ -16,23 +16,29 @@ def crear_token(data: dict):
     return jwt.encode(to_encode, JWT_SECRET, algorithm=JWT_ALGORITHM)
 
 def autenticar_usuario(db: Session, username: str, password: str):
+    print(">>> AUTENTICAR_USUARIO <<<")
+    print("Username recibido:", username)
+
     user = obtener_usuario_por_username(db, username)
-    print("DEBUG → user:", user)
+    print("Usuario encontrado:", user)
 
     if not user:
-        print("DEBUG → usuario NO existe")
+        print("❌ Usuario NO encontrado")
         return None
 
-    print("DEBUG → hash BD:", user.hashed_password)
-    print("DEBUG → password recibido:", repr(password))
-    print("DEBUG → verify:", verify_password(password, user.hashed_password))
+    print("Hash en BD:", user.hashed_password)
+    print("Password recibido:", password)
 
-    if not verify_password(password, user.hashed_password):
-        print("DEBUG → VERIFY FALLÓ")
+    result = verify_password(password, user.hashed_password)
+    print("Resultado verify_password:", result)
+
+    if not result:
+        print("❌ Password NO válido")
         return None
 
-    print("DEBUG → LOGIN OK")
+    print("✅ Autenticación exitosa")
     return user
+
 
 def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
     try:
